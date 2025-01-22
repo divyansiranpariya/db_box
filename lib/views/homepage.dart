@@ -103,6 +103,13 @@ class _HomePageState extends State<HomePage> {
               setState(() {});
             },
           ),
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () {
+              DBHelper.instance.removeAllTodos();
+              setState(() {});
+            },
+          ),
         ],
       ),
       body: FutureBuilder<List<Todo>>(

@@ -27,13 +27,10 @@ class DBHelper {
     );
   }
 
-  Future<int> insertTodo({required Todo todo}) async {
+  Future<int> rawInsertTodo({required Todo todo}) async {
     await initDb();
-    Map<String, dynamic> data = {
-      'title': todo.title,
-      'isBookmarked': todo.isBookmarked ? 1 : 0,
-    };
-    return await db!.insert('todos', data);
+    String query = "INSERT INTO todos (title, isBookmarked)VALUES ("${todo.title}", ${todo.isBookmarked ? 1 : 0})";
+    return await db!.rawInsert(query);
   }
 
   Future<List<Todo>> getTodos() async {
@@ -48,23 +45,18 @@ class DBHelper {
     }).toList();
   }
 
-  Future<int> updateTodo({required Todo todo}) async {
+  Future<int> rawUpdateTodo({required Todo todo}) async {
     await initDb();
-    Map<String, dynamic> data = {
-      'title': todo.title,
-      'isBookmarked': todo.isBookmarked ? 1 : 0,
-    };
-    return await db!.update(
-      'todos',
-      data,
-      where: 'id = ?',
-      whereArgs: [todo.id],
-    );
+    String query = "UPDATE todos SET title = "${todo.title}", isBookmarked = ${todo.isBookmarked ? 1 : 0} WHERE id = ${todo.id}";
+    return await db!.rawUpdate(query);
   }
 
-  Future<void> removeTodo(int id) async {
+  Future<void> rawDeleteTodo(int id) async {
     await initDb();
-    await db!.delete('todos', where: 'id = ?', whereArgs: [id]);
+    String query = '''
+      DELETE FROM todos WHERE id = $id
+    ''';
+    await db!.rawDelete(query);
   }
 
   Future<void> removeAllTodos() async {
